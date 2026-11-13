@@ -4,6 +4,9 @@ import { tokens } from "./text";
 const K1 = 1.4;
 const B = 0.7;
 const HEADING_WEIGHT = 3;
+// Unrelated texts still score about 0.75 with gte-small, so only the part above that counts.
+const SIMILARITY_BASE = 0.78;
+const SIMILARITY_WEIGHT = 40;
 
 /**
  * BM25 keyword ranking over passages, with the heading and document title
@@ -12,9 +15,13 @@ const HEADING_WEIGHT = 3;
  * This is the search used when no database is configured, and the keyword half
  * of the hybrid search when one is (see supabase/migrations for the SQL half).
  */
-export function rankPassages(query: string, passages: Passage[], k = 4): ScoredPassage[] {
+export function rankPassages(
+  query: string,
+  passages: (Passage & { similarity?: number | null })[],
+  k = 4,
+): ScoredPassage[] {
   const q = [...new Set(tokens(query))];
-  if (!q.length || !passages.length) return [];
+  if (!passages.length) return [];
 
   const docs = passages.map((p) => {
     const body = tokens(p.content);
@@ -47,6 +54,8 @@ export function rankPassages(query: string, passages: Passage[], k = 4): ScoredP
     // Reward passages that cover more of the question, not one word many times.
     const coverage = totalWeight ? weight / totalWeight : 0;
     score *= 0.5 + 0.5 * coverage;
+    // A close match by meaning lifts a passage that shares few words with the question.
+    score += Math.max(0, (p.similarity ?? 0) - SIMILARITY_BASE) * SIMILARITY_WEIGHT;
     return { ...p, score, coverage };
   });
 
