@@ -81,4 +81,4 @@ export function isConfident(ranked: ScoredPassage[]): boolean {
 }
 
 /** Cosine similarity above which a meaning-based match is trusted on its own. */
-export const SIMILARITY_FLOOR = 0.86;
+export const SIMILARITY_FLOOR = 0.865;

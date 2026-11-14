@@ -103,12 +103,14 @@
 .desk-docs {
   display: flex;
   flex-direction: column;
+  min-width: 0;
   min-height: 0;
   border-right: 1px solid var(--ink);
   background: #fbfaf6;
 }
 
 .desk-tabs {
+  position: relative;
   display: flex;
   gap: 0.25rem;
   padding: 0.6rem 0.75rem 0;
@@ -214,6 +216,7 @@
 .desk-chat {
   display: flex;
   flex-direction: column;
+  min-width: 0;
   min-height: 0;
 }
 
@@ -734,7 +737,7 @@
   }
 
   .desk {
-    grid-template-columns: 1fr;
+    grid-template-columns: minmax(0, 1fr);
     grid-template-rows: minmax(0, 15rem) minmax(0, 1fr);
     height: min(46rem, 88dvh);
     box-shadow: 6px 6px 0 var(--ink);

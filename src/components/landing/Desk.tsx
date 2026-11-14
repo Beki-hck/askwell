@@ -21,6 +21,7 @@ export function Desk({ business, hasServerModel, allowLocal, documents }: Props)
   const [activeId, setActiveId] = useState(documents[0]?.id ?? "");
   const [marked, setMarked] = useState<{ documentId: string; heading: string | null; at: number } | null>(null);
   const sheet = useRef<HTMLDivElement>(null);
+  const tabs = useRef<HTMLDivElement>(null);
   const keyDialog = useRef<HTMLDialogElement>(null);
   const active = documents.find((d) => d.id === activeId) ?? documents[0];
 
@@ -30,12 +31,19 @@ export function Desk({ business, hasServerModel, allowLocal, documents }: Props)
     if (!container) return;
     const target = container.querySelector<HTMLElement>("[data-marked]");
     container.scrollTo({ top: target ? Math.max(target.offsetTop - 16, 0) : 0, behavior: "smooth" });
+
+    // And slide the tab strip so the open document's tab is visible.
+    const strip = tabs.current;
+    const tab = strip?.querySelector<HTMLElement>('[aria-selected="true"]');
+    if (strip && tab) {
+      strip.scrollTo({ left: tab.offsetLeft - (strip.clientWidth - tab.offsetWidth) / 2, behavior: "smooth" });
+    }
   }, [marked, activeId]);
 
   return (
     <div className="desk">
       <div className="desk-docs">
-        <div className="desk-tabs" role="tablist" aria-label={`${business.name} documents`}>
+        <div className="desk-tabs" ref={tabs} role="tablist" aria-label={`${business.name} documents`}>
           {documents.map((doc) => (
             <button
               key={doc.id}

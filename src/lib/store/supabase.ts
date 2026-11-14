@@ -199,11 +199,15 @@ export function createSupabaseStore(db: SupabaseClient): Store {
         throw new StoreError(inserted.error.message, 500);
       }
 
-      // Embeddings are filled in by the edge function. If it fails, the
-      // passages are still found by keyword and are picked up on the next run.
-      await db.functions
-        .invoke("embed", { body: { backfill: businessId }, signal: AbortSignal.timeout(20_000) })
-        .catch(() => null);
+      // Embeddings are filled in by the edge function, a few passages per call.
+      // If it fails, the passages are still found by keyword and are picked up
+      // the next time a document is added.
+      for (let call = 0; call < 12; call++) {
+        const { data, error } = await db.functions
+          .invoke("embed", { body: { backfill: businessId }, signal: AbortSignal.timeout(15_000) })
+          .catch(() => ({ data: null, error: true }));
+        if (error || !data?.remaining || !data.embedded) break;
+      }
 
       return toDocument(row);
     },

@@ -12,6 +12,10 @@ const session = new (globalThis as any).Supabase.ai.Session("gte-small");
 const embed = (text: string): Promise<number[]> =>
   session.run(text.slice(0, 2000), { mean_pool: true, normalize: true });
 
+// A free edge function has a small compute budget, so passages are embedded a
+// few at a time and the caller asks again until none remain.
+const BATCH = 8;
+
 const json = (body: unknown, status = 200) =>
   new Response(JSON.stringify(body), { status, headers: { "content-type": "application/json" } });
 
@@ -35,7 +39,7 @@ Deno.serve(async (request) => {
       .select("id, document_title, heading, content")
       .eq("business_id", body.backfill)
       .is("embedding", null)
-      .limit(60);
+      .limit(BATCH);
     if (error) return json({ error: error.message }, 500);
 
     let done = 0;
@@ -48,7 +52,12 @@ Deno.serve(async (request) => {
         .eq("id", row.id);
       if (!failed) done++;
     }
-    return json({ embedded: done, remaining: (rows?.length ?? 0) - done });
+    const { count } = await admin
+      .from("passages")
+      .select("id", { count: "exact", head: true })
+      .eq("business_id", body.backfill)
+      .is("embedding", null);
+    return json({ embedded: done, remaining: count ?? 0 });
   }
 
   return json({ error: "Send { input } or { backfill }." }, 400);
