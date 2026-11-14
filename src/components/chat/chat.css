@@ -186,10 +186,8 @@ ul.chat-quote {
   cursor: pointer;
 }
 
-.chat-rate button[aria-pressed="true"] {
-  background: var(--c-ink);
-  border-color: var(--c-ink);
-  color: var(--c-bg);
+.chat-rated {
+  color: var(--c-ink);
 }
 
 .chat-followup {

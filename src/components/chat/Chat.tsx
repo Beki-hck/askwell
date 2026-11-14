@@ -273,19 +273,24 @@ export function Chat({ business, hasServerModel, onSources, onOpenKey, autoFocus
 
                   {turn.status === "done" && turn.answered && turn.messageId && turn.sources.length > 0 && (
                     <div className="chat-rate">
-                      <span role="status">
-                        {turn.feedbackFailed
-                          ? "That was not saved. Try again."
-                          : turn.feedback
-                            ? "Thanks for telling us."
-                            : "Did this help?"}
-                      </span>
-                      <button type="button" aria-pressed={turn.feedback === 1} onClick={() => void rate(turn, 1)}>
-                        Yes
-                      </button>
-                      <button type="button" aria-pressed={turn.feedback === -1} onClick={() => void rate(turn, -1)}>
-                        No
-                      </button>
+                      {turn.feedback ? (
+                        // Once rated, the question is answered: only the thanks stays.
+                        <span role="status" className="chat-rated">
+                          {turn.feedback === 1
+                            ? "Glad it helped. Thanks for telling us."
+                            : "Thanks. The team will see this answer did not help."}
+                        </span>
+                      ) : (
+                        <>
+                          <span role="status">{turn.feedbackFailed ? "That was not saved. Try again." : "Did this help?"}</span>
+                          <button type="button" onClick={() => void rate(turn, 1)}>
+                            Yes
+                          </button>
+                          <button type="button" onClick={() => void rate(turn, -1)}>
+                            No
+                          </button>
+                        </>
+                      )}
                     </div>
                   )}
 

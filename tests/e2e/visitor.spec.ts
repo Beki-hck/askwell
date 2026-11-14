@@ -17,8 +17,10 @@ test.describe("a visitor on the demo site", () => {
     await expect(answer.locator(".chat-excerpt")).toContainText("Dogs and cats are welcome");
 
     await answer.getByRole("button", { name: "Yes" }).click();
-    await expect(answer.getByText("Thanks for telling us.")).toBeVisible();
-    await expect(answer.getByRole("button", { name: "Yes" })).toHaveAttribute("aria-pressed", "true");
+    await expect(answer.getByText("Glad it helped. Thanks for telling us.")).toBeVisible();
+    // The question is answered, so the buttons go away.
+    await expect(answer.getByRole("button", { name: "Yes" })).toHaveCount(0);
+    await expect(answer.getByRole("button", { name: "No" })).toHaveCount(0);
   });
 
   test("is told when the documents have no answer, and can leave an email", async ({ page }) => {
