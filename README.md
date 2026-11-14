@@ -89,7 +89,7 @@ To connect a database, copy `.env.example` to `.env.local` and fill in the two S
 ## Tests
 
 ```bash
-npm test            # 39 unit tests: chunking, ranking, citations, grading, model streaming
+npm test            # 43 unit tests: chunking, ranking, citations, grading, model streaming
 npm run build
 npm run test:e2e    # 28 browser tests: chat, owner area, embed script, read-only demo, phone layout
 ```
