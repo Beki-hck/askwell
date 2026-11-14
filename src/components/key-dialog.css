@@ -1,0 +1,90 @@
+.key-dialog {
+  width: min(27rem, calc(100vw - 2rem));
+  margin: auto;
+  padding: 0;
+  border: 0;
+  border-radius: 16px;
+  background: #fff;
+  color: #15171e;
+  font-family: "Funnel Sans Variable", system-ui, sans-serif;
+  box-shadow: 0 24px 60px -12px rgb(21 23 30 / 0.35);
+}
+
+.key-dialog::backdrop {
+  background: rgb(21 23 30 / 0.45);
+}
+
+.key-dialog form {
+  padding: 1.5rem;
+}
+
+.key-dialog h2 {
+  margin: 0 0 0.5rem;
+  font: 600 1.25rem/1.2 "Funnel Display Variable", system-ui, sans-serif;
+}
+
+.key-dialog p {
+  margin: 0 0 1rem;
+  color: #636878;
+  font-size: 0.875rem;
+  line-height: 1.5;
+}
+
+.key-dialog label {
+  display: block;
+  margin: 0.9rem 0 0.3rem;
+  font-size: 0.8125rem;
+  font-weight: 600;
+}
+
+.key-dialog :is(input, select) {
+  width: 100%;
+  padding: 0.55rem 0.7rem;
+  border: 1px solid #c9cdd8;
+  border-radius: 8px;
+  background: #fff;
+  color: inherit;
+  font: inherit;
+  font-size: 0.9375rem;
+}
+
+.key-dialog :is(input, select, button):focus-visible {
+  outline: 2px solid #2a3ce6;
+  outline-offset: 2px;
+}
+
+.key-dialog .key-hint {
+  margin: 0.35rem 0 0;
+  font-size: 0.8125rem;
+}
+
+.key-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.5rem;
+  margin-top: 1.4rem;
+}
+
+.key-actions button {
+  padding: 0.55rem 1rem;
+  border: 1px solid #c9cdd8;
+  border-radius: 8px;
+  background: #fff;
+  color: inherit;
+  font: inherit;
+  font-size: 0.875rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.key-actions .key-save {
+  border-color: #2a3ce6;
+  background: #2a3ce6;
+  color: #fff;
+}
+
+.key-actions .key-remove {
+  margin-right: auto;
+  border-color: transparent;
+  color: #b3261e;
+}

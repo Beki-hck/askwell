@@ -1,0 +1,171 @@
+.widget {
+  --w-accent: #2a3ce6;
+  --w-on-accent: #fff;
+  --w-head: #15171e;
+  --w-on-head: #fff;
+
+  position: fixed;
+  right: 1.25rem;
+  bottom: 1.25rem;
+  z-index: 50;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 0.75rem;
+  font-family: "Funnel Sans Variable", system-ui, sans-serif;
+}
+
+.widget-launcher {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.8rem 1.15rem 0.8rem 1rem;
+  border: 0;
+  border-radius: 999px;
+  background: var(--w-accent);
+  color: var(--w-on-accent);
+  font: 600 0.9375rem/1 inherit;
+  box-shadow: 0 10px 28px -8px rgb(0 0 0 / 0.45);
+  cursor: pointer;
+  transition: transform 0.15s ease;
+}
+
+.widget-launcher:hover {
+  transform: translateY(-2px);
+}
+
+.widget-launcher:focus-visible,
+.widget-head button:focus-visible {
+  outline: 2px solid var(--w-on-accent);
+  outline-offset: 2px;
+  box-shadow: 0 0 0 5px var(--w-accent);
+}
+
+.widget-panel {
+  display: flex;
+  flex-direction: column;
+  width: min(24rem, calc(100vw - 2rem));
+  height: min(38rem, calc(100dvh - 7rem));
+  overflow: hidden;
+  border-radius: 18px;
+  background: #fff;
+  box-shadow: 0 30px 70px -20px rgb(0 0 0 / 0.5), 0 0 0 1px rgb(0 0 0 / 0.07);
+  transform-origin: bottom right;
+  animation: widget-in 0.22s cubic-bezier(0.2, 0.9, 0.3, 1.1);
+}
+
+@keyframes widget-in {
+  from { opacity: 0; transform: translateY(10px) scale(0.96); }
+}
+
+.widget-panel .chat {
+  --c-accent: var(--w-accent);
+  --c-on-accent: var(--w-on-accent);
+  flex: 1;
+}
+
+.widget-head {
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+  padding: 0.85rem 0.9rem 0.85rem 1rem;
+  background: var(--w-head);
+  color: var(--w-on-head);
+}
+
+.widget-head div {
+  flex: 1;
+  display: grid;
+  line-height: 1.25;
+}
+
+.widget-head strong {
+  font-weight: 600;
+}
+
+.widget-head div span {
+  font-size: 0.8125rem;
+  opacity: 0.7;
+}
+
+.widget-avatar {
+  display: grid;
+  place-items: center;
+  width: 2.1rem;
+  height: 2.1rem;
+  border-radius: 50%;
+  background: var(--w-accent);
+  color: var(--w-on-accent);
+  font: 600 1rem/1 "Funnel Display Variable", system-ui, sans-serif;
+}
+
+.widget-head button {
+  display: grid;
+  place-items: center;
+  width: 2rem;
+  height: 2rem;
+  border: 0;
+  border-radius: 8px;
+  background: none;
+  color: inherit;
+  cursor: pointer;
+}
+
+.widget-head button:hover {
+  background: rgb(255 255 255 / 0.12);
+}
+
+.widget-credit {
+  padding: 0 1rem 0.6rem;
+  background: #fff;
+  color: #8a8fa0;
+  font-size: 0.6875rem;
+  text-align: right;
+  text-decoration: none;
+}
+
+.widget-credit:hover {
+  color: #15171e;
+}
+
+/* Inside the embed iframe the widget is the whole page. */
+.widget[data-embedded] {
+  inset: 0;
+  right: 0;
+  bottom: 0;
+  justify-content: flex-end;
+  padding: 0.75rem;
+}
+
+.widget[data-embedded] .widget-panel {
+  width: 100%;
+  height: 100%;
+  box-shadow: 0 0 0 1px rgb(0 0 0 / 0.1), 0 8px 24px -8px rgb(0 0 0 / 0.35);
+}
+
+@media (max-width: 480px) {
+  .widget:not([data-embedded])[data-open] {
+    inset: 0;
+    gap: 0;
+  }
+
+  .widget:not([data-embedded])[data-open] .widget-panel {
+    width: 100%;
+    height: 100%;
+    border-radius: 0;
+  }
+
+  .widget:not([data-embedded])[data-open] .widget-launcher {
+    display: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .widget-panel {
+    animation: none;
+  }
+
+  .widget-launcher {
+    transition: none;
+  }
+}

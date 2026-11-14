@@ -1,7 +1,7 @@
-import { answerQuestion } from "@/lib/answer";
-import { grade, summarise } from "@/lib/evals";
+import { summarise } from "@/lib/evals";
 import { rateLimit, route } from "@/lib/http";
 import { LlmError, llmFromHeaders, serverLlm } from "@/lib/llm";
+import { runTest } from "@/lib/run-test";
 import { getViewer } from "@/lib/session";
 import { StoreError, type TestResult } from "@/lib/types";
 
@@ -28,29 +28,7 @@ export const POST = route(async (request: Request) => {
         send({ type: "start", total: tests.length, mode: llm ? "model" : "search", model: llm?.model ?? null });
         for (const test of tests) {
           if (request.signal.aborted) return;
-          const passages = await store.search(business, test.question, 4);
-          let answer = "";
-          let answered = false;
-          let sources: TestResult["sources"] = [];
-          for await (const event of answerQuestion({
-            business,
-            question: test.question,
-            history: [],
-            passages,
-            llm,
-            signal: request.signal,
-          })) {
-            if (event.type === "done") ({ answer, answered, sources } = event);
-          }
-          const result: TestResult = {
-            testCaseId: test.id,
-            question: test.question,
-            expected: test.expected,
-            answer,
-            answered,
-            sources,
-            ...grade(test, { answer, answered, evidence: passages.map((p) => p.content).join("\n") }),
-          };
+          const result = await runTest(store, business, test, llm, request.signal);
           results.push(result);
           send({ type: "result", result });
         }

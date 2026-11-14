@@ -1,0 +1,330 @@
+/* Larkspur Night Line: the made-up company whose site hosts the demo widget.
+   Deliberately a different brand from Askwell, as a customer's site would be. */
+
+.lk {
+  --night: #0e1730;
+  --dusk: #16224a;
+  --rail: #2a396e;
+  --lamp: #f2b544;
+  --linen: #f1e9d8;
+  --haze: #a3acc9;
+
+  min-height: 100dvh;
+  background: var(--night);
+  color: var(--linen);
+  font-family: var(--sans);
+}
+
+.lk :focus-visible {
+  outline-color: var(--lamp);
+}
+
+.lk a {
+  text-underline-offset: 3px;
+}
+
+.lk-notice {
+  padding: 0.6rem var(--gutter);
+  background: var(--lamp);
+  color: var(--night);
+  font-size: 0.875rem;
+  text-align: center;
+}
+
+.lk-top {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem 2rem;
+  max-width: var(--measure);
+  margin: 0 auto;
+  padding: 1.5rem var(--gutter);
+}
+
+.lk-logo {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.55rem;
+  color: var(--linen);
+  font: 500 1.25rem/1 var(--serif);
+  letter-spacing: 0.01em;
+  text-decoration: none;
+}
+
+.lk-logo svg {
+  color: var(--lamp);
+}
+
+.lk-top nav {
+  display: flex;
+  gap: 1.5rem;
+  font-size: 0.9375rem;
+}
+
+.lk-top nav a {
+  color: var(--haze);
+  text-decoration: none;
+}
+
+.lk-top nav a:hover {
+  color: var(--linen);
+}
+
+.lk main > section {
+  max-width: var(--measure);
+  margin: 0 auto;
+  padding-inline: var(--gutter);
+}
+
+.lk-hero {
+  padding-top: clamp(2.5rem, 7vw, 5.5rem);
+}
+
+.lk-hero h1 {
+  font: 400 clamp(2.4rem, 6.6vw, 5.25rem) / 1.02 var(--serif);
+  letter-spacing: -0.02em;
+}
+
+.lk-hero h1 em {
+  color: var(--lamp);
+}
+
+.lk-hero p {
+  max-width: 34rem;
+  margin-top: 1.5rem;
+  color: var(--haze);
+  font-size: 1.125rem;
+}
+
+.lk-scene {
+  display: block;
+  width: 100%;
+  height: auto;
+  margin-top: clamp(1rem, 4vw, 3rem);
+  overflow: hidden;
+}
+
+/* The one piece of motion on this page: the train pulls in once, on load. */
+.lk-train {
+  animation: lk-arrive 2.6s cubic-bezier(0.16, 0.8, 0.2, 1) both;
+}
+
+@keyframes lk-arrive {
+  from { transform: translateX(-900px); }
+  to { transform: translateX(150px); }
+}
+
+.lk-band {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1.4fr);
+  gap: 2rem clamp(2rem, 6vw, 5rem);
+  align-items: start;
+  padding-block: clamp(3rem, 7vw, 5rem);
+}
+
+.lk h2 {
+  font: 400 clamp(1.7rem, 3.2vw, 2.4rem) / 1.1 var(--serif);
+  letter-spacing: -0.01em;
+}
+
+.lk-band p,
+.lk-help p {
+  margin-top: 0.9rem;
+  color: var(--haze);
+}
+
+.lk-band table {
+  width: 100%;
+  border-collapse: collapse;
+  font-variant-numeric: tabular-nums;
+}
+
+.lk-band thead th {
+  padding-bottom: 0.6rem;
+  color: var(--haze);
+  font-size: 0.8125rem;
+  font-weight: 500;
+  text-align: left;
+}
+
+.lk-band tbody :is(th, td) {
+  padding: 1rem 1rem 1rem 0;
+  border-top: 1px solid var(--rail);
+  font-weight: 400;
+  text-align: left;
+  vertical-align: baseline;
+}
+
+.lk-band td b {
+  display: block;
+  color: var(--lamp);
+  font: 500 1.75rem/1.1 var(--serif);
+}
+
+.lk-route {
+  grid-column: 1 / -1;
+  display: flex;
+  justify-content: space-between;
+  gap: 0.5rem;
+  margin: 0;
+  padding: 1.4rem 0 0;
+  list-style: none;
+  border-top: 2px solid var(--rail);
+  font-size: 0.875rem;
+}
+
+.lk-route li {
+  position: relative;
+  color: var(--haze);
+}
+
+.lk-route li::before {
+  content: "";
+  position: absolute;
+  top: calc(-1.4rem - 6px);
+  left: 0;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: var(--night);
+  border: 2px solid var(--lamp);
+}
+
+.lk-route li:last-child {
+  text-align: right;
+}
+
+.lk-route li:last-child::before {
+  left: auto;
+  right: 0;
+}
+
+.lk-cabins {
+  padding-block: clamp(2rem, 5vw, 4rem);
+}
+
+.lk-cabins dl {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(15rem, 1fr));
+  gap: 0 2.5rem;
+  margin: 2rem 0 0;
+}
+
+.lk-cabins dl div {
+  padding: 1.25rem 0 1.5rem;
+  border-top: 1px solid var(--rail);
+}
+
+.lk-cabins dt {
+  font: 500 1.3rem/1.2 var(--serif);
+}
+
+.lk-cabins dd {
+  margin: 0.5rem 0 0;
+  color: var(--haze);
+}
+
+.lk-help {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1.4fr);
+  gap: 2rem clamp(2rem, 6vw, 5rem);
+  padding-block: clamp(3rem, 7vw, 5rem) clamp(5rem, 10vw, 8rem);
+}
+
+.lk-help ul {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  columns: 2 14rem;
+  column-gap: 2.5rem;
+}
+
+.lk-help li {
+  break-inside: avoid;
+  border-top: 1px solid var(--rail);
+}
+
+.lk-help li a {
+  display: block;
+  padding: 0.85rem 0;
+  color: var(--linen);
+  text-decoration: none;
+}
+
+.lk-help li a:hover {
+  color: var(--lamp);
+}
+
+.lk-foot {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 0.5rem 2rem;
+  max-width: var(--measure);
+  margin: 0 auto;
+  padding: 1.5rem var(--gutter) 6.5rem;
+  border-top: 1px solid var(--rail);
+  color: var(--haze);
+  font-size: 0.875rem;
+}
+
+/* Help article */
+.lk-article main {
+  max-width: 44rem;
+  margin: 0 auto;
+  padding: 1.5rem var(--gutter) 6rem;
+}
+
+.lk-article .doc {
+  font-family: var(--serif);
+  font-size: 1.125rem;
+  line-height: 1.65;
+}
+
+.lk-article .doc h1 {
+  margin-bottom: 1.5rem;
+  font: 400 clamp(2rem, 5vw, 3rem) / 1.08 var(--serif);
+}
+
+.lk-article .doc h2 {
+  margin: 2.2rem 0 0.6rem;
+  color: var(--lamp);
+  font-size: 1.35rem;
+}
+
+.lk-article .doc p + p,
+.lk-article .doc ul {
+  margin-top: 0.8rem;
+}
+
+@media (max-width: 760px) {
+  .lk-band,
+  .lk-help {
+    grid-template-columns: 1fr;
+  }
+
+  .lk-route {
+    flex-direction: column;
+    gap: 0.9rem;
+    padding: 0 0 0 1.5rem;
+    border-top: 0;
+    border-left: 2px solid var(--rail);
+  }
+
+  .lk-route li::before,
+  .lk-route li:last-child::before {
+    top: 0.3em;
+    left: calc(-1.5rem - 6px);
+    right: auto;
+  }
+
+  .lk-route li:last-child {
+    text-align: left;
+  }
+
+  @keyframes lk-arrive {
+    from { transform: translateX(-900px); }
+    to { transform: translateX(-20px); }
+  }
+}

@@ -2,7 +2,7 @@ import type { Passage, ScoredPassage } from "./types";
 import { tokens } from "./text";
 
 const K1 = 1.4;
-const B = 0.7;
+const B = 0.35;
 const HEADING_WEIGHT = 3;
 // Unrelated texts still score about 0.75 with gte-small, so only the part above that counts.
 const SIMILARITY_BASE = 0.78;

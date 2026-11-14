@@ -86,8 +86,8 @@ Dogs and cats are welcome in sleeper cabins and grand sleepers when you book the
 
 Dogs must be on a lead in corridors and are not allowed in the dining car. The train stops for 15 minutes at Morrow Junction at about 23:40, which is the only chance for a walk before morning.
 
-## Assistance dogs
-Assistance dogs travel free in every class, including the dining car, and do not need a pet ticket.
+## Assistance animals
+Guide dogs and other trained assistance animals travel free in every class, including the dining car, and do not need a pet ticket.
 
 ## Smoking and vaping
 Smoking and vaping are not allowed anywhere on the train, including cabins and the spaces between carriages. The 15-minute stop at Morrow Junction is the only smoking break.

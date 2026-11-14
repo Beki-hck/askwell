@@ -2,7 +2,7 @@ const STOP = new Set(
   `a an and are as at be but by can could do does for from had has have how i if in into is it its
   me my of on or our so than that the their them then there these they this to up us was we were
   what when where which who why will with would you your am did about any some get got just also
-  not no yes please tell want need know like many much take go got now there's still even long should shall may might must he she him her his hers thing`.split(/\s+/),
+  not no yes please tell want need know like many much take go got now there's still even long should shall may might must he she him her his hers thing happen happens`.split(/\s+/),
 );
 
 /** Light stemmer: enough to match "refunds" with "refund" and "boarding" with "board". */
