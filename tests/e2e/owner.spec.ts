@@ -117,6 +117,59 @@ test.describe("the public, read-only demo", () => {
   });
 });
 
+// The live site runs on several server copies that share nothing. Two local
+// servers stand in for them here: one draws the page, the other gets the click.
+test.describe("when another server instance handles the next request", () => {
+  test("a rating is accepted for an answer the other instance wrote", async ({ request }) => {
+    const chat = await request.post("/api/chat", { data: { slug: "larkspur", question: "Can I bring my dog?" } });
+    const done = (await chat.text()).trim().split("\n").map((l) => JSON.parse(l)).find((e) => e.type === "done");
+    expect(done.messageId).toBeTruthy();
+    const rated = await request.post(`${READ_ONLY}/api/feedback`, { data: { messageId: done.messageId, value: 1 } });
+    expect(rated.status()).toBe(200);
+  });
+
+  test("test results from one instance fill the table drawn by the other", async ({ page }) => {
+    await page.route("**/api/evals/run", async (route) => {
+      const response = await route.fetch({ url: `${READ_ONLY}/api/evals/run` });
+      await route.fulfill({ response });
+    });
+    await page.goto("/dashboard/quality");
+    await page.getByRole("button", { name: "Run all 15 tests" }).click();
+    await expect(page.getByRole("heading", { name: "14 of 15 passed" })).toBeVisible();
+    await expect(page.locator(".verdict")).toHaveCount(15);
+    await expect(page.getByText("Not run", { exact: true })).toHaveCount(0);
+  });
+
+  test("links to seeded conversations open on the other instance", async ({ page }) => {
+    await page.goto("/dashboard");
+    const link = page.locator(".rows a[href*='conversations?c=']").last();
+    const [href, question] = [await link.getAttribute("href"), await link.innerText()];
+    await page.goto(`${READ_ONLY}${href}`);
+    await expect(page.locator(".transcript")).toContainText(question);
+  });
+});
+
+test.describe("test runs in the read-only demo", () => {
+  test("stay on the page and the overview after a reload", async ({ page }) => {
+    await page.goto(`${READ_ONLY}/dashboard/quality`);
+    await expect(page.getByRole("heading", { name: "14 of 15 passed" })).toBeVisible();
+    await expect(page.locator(".run [role=status]")).toContainText("Last run yesterday");
+
+    await page.getByRole("button", { name: "Run all 15 tests" }).click();
+    await expect(page.locator(".run [role=status]")).toContainText("Last run just now");
+    await expect(page.getByText("kept in this browser only")).toBeVisible();
+    await expect(page.locator(".verdict")).toHaveCount(15);
+
+    await page.reload();
+    await expect(page.locator(".run [role=status]")).toContainText("Last run just now");
+    await expect(page.locator(".run [role=status]")).toContainText("The run before passed 14 of 15");
+    await expect(page.locator(".verdict")).toHaveCount(15);
+
+    await page.goto(`${READ_ONLY}/dashboard`);
+    await expect(page.getByText("The last test run passed 14 of 15 questions, just now")).toBeVisible();
+  });
+});
+
 test.describe("the chat API", () => {
   test("validates its input", async ({ request }) => {
     expect((await request.post("/api/chat", { data: { slug: "larkspur" } })).status()).toBe(400);

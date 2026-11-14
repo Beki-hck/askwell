@@ -4,7 +4,7 @@ A support assistant a business can put on its website. A visitor asks a question
 
 The owner gets a private area to manage documents, read every conversation, see which questions went unanswered, and run a test set that grades the assistant's answers.
 
-This is a portfolio project by Beki, built with Claude. The demo runs on the help centre of Larkspur Night Line, an invented sleeper-train company.
+This is a portfolio project by Beki, made in collaboration with Claude, Anthropic's AI model. Beki set the brief, directed the work and tested it; Claude wrote the code. The demo runs on the help centre of Larkspur Night Line, an invented sleeper-train company.
 
 ## What it does
 
@@ -89,14 +89,15 @@ To connect a database, copy `.env.example` to `.env.local` and fill in the two S
 ## Tests
 
 ```bash
-npm test            # 37 unit tests: chunking, ranking, citations, grading, model streaming
+npm test            # 39 unit tests: chunking, ranking, citations, grading, model streaming
 npm run build
-npm run test:e2e    # 24 browser tests: chat, owner area, embed script, read-only demo, phone layout
+npm run test:e2e    # 28 browser tests: chat, owner area, embed script, read-only demo, phone layout
 ```
 
 ## What was and wasn't verified
 
-- The in-memory mode is covered end to end by the tests above.
+- The in-memory mode is covered end to end by the tests above. Because a host like Vercel runs several copies of the server that share no memory, some tests send a click to a second server than the one that drew the page.
+- In the read-only demo a test run is not stored on the server. It is kept in the visitor's browser and shown only to them.
 - The database schema, security policies and widget functions were run and checked directly in Postgres. The embedding function is deployed and was used to embed the demo passages.
 - The app talking to that database over the network has not been exercised yet, because the build machine could not reach Supabase. Until it has, treat the Supabase mode as untested end to end.
 - Model mode is tested against a simulated provider (both the Claude and the OpenAI-style stream formats). It has not been run against a paid API.

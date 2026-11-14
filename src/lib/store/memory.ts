@@ -7,7 +7,9 @@ import {
   DEMO_SEED_QUESTIONS,
   DEMO_TEST_CASES,
 } from "../demo-data";
+import { summarise } from "../evals";
 import { rankPassages } from "../rank";
+import { runTest } from "../run-test";
 import {
   type Business,
   type Conversation,
@@ -32,7 +34,6 @@ interface State {
   evalRuns: EvalRun[];
 }
 
-const id = () => crypto.randomUUID();
 const MAX_CONVERSATIONS = 300;
 
 /** A uuid-shaped id derived from a string. */
@@ -52,6 +53,14 @@ function stableId(seed: string): string {
  * Data lives as long as the server process does.
  */
 export function createMemoryStore(now: () => Date = () => new Date()): Store & { ready: Promise<void> } {
+  // While the demo is being seeded, ids are derived from a counter, so every
+  // server instance starts with the same ids. A host that runs several copies
+  // of the server (Vercel does) can then follow a link or grade a test that
+  // another copy produced. After seeding, ids are random.
+  let seeding = true;
+  let seeded = 0;
+  const id = () => (seeding ? stableId(`askwell-seed-${seeded++}`) : crypto.randomUUID());
+
   const state: State = {
     business: { ...DEMO_BUSINESS },
     documents: [],
@@ -59,7 +68,7 @@ export function createMemoryStore(now: () => Date = () => new Date()): Store & {
     conversations: [],
     messages: [],
     followUps: [],
-    testCases: DEMO_TEST_CASES.map((t) => ({ ...t, id: id(), businessId: DEMO_BUSINESS.id })),
+    testCases: DEMO_TEST_CASES.map((t) => ({ ...t, id: stableId(`test:${t.question}`), businessId: DEMO_BUSINESS.id })),
     evalRuns: [],
   };
 
@@ -182,8 +191,9 @@ export function createMemoryStore(now: () => Date = () => new Date()): Store & {
 
     async setFeedback(messageId, value) {
       const message = state.messages.find((m) => m.id === messageId && m.role === "assistant");
-      if (!message) throw new StoreError("Message not found.", 404);
-      message.feedback = value;
+      // A message another server instance wrote is not in this one's memory.
+      // There is nothing to update, and that is not the visitor's mistake.
+      if (message) message.feedback = value;
     },
 
     async addFollowUp(business, input) {
@@ -347,6 +357,21 @@ export function createMemoryStore(now: () => Date = () => new Date()): Store & {
         createdAt: ago(f.minutesAgo),
       });
     }
+
+    // One test run, so the owner area opens with a real score. It is produced
+    // by the same code the "Run all tests" button calls.
+    const results = [];
+    for (const test of state.testCases) results.push(await runTest(store, state.business, test, null));
+    state.evalRuns.push({
+      id: id(),
+      businessId: state.business.id,
+      createdAt: ago(60 * 26),
+      mode: "search",
+      model: null,
+      ...summarise(results),
+      results,
+    });
+    seeding = false;
   };
 
   return Object.assign(store, { ready: seed() });

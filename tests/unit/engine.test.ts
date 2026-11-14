@@ -225,6 +225,39 @@ describe("the demo knowledge base", () => {
     }
   });
 
+  // A host like Vercel runs several copies of the server, each with its own
+  // memory. A page drawn by one copy must still make sense to another.
+  it("starts every server instance with the same ids", async () => {
+    const [a, b] = [createMemoryStore(), createMemoryStore()];
+    await Promise.all([a.ready, b.ready]);
+    const id = DEMO_BUSINESS.id;
+    const ids = async (s: typeof a) => ({
+      tests: (await s.listTestCases(id)).map((t) => t.id),
+      documents: (await s.listDocuments(id)).map((d) => d.id),
+      conversations: (await s.listConversations(id)).map((c) => c.id).sort(),
+      run: (await s.listEvalRuns(id)).map((r) => r.results.map((x) => x.testCaseId)),
+    });
+    expect(await ids(a)).toEqual(await ids(b));
+    expect(new Set((await ids(a)).tests).size).toBe(15);
+
+    // A run graded by one instance lines up with the tests listed by the other.
+    const [run] = await a.listEvalRuns(id);
+    expect(run.correct + run.declinedCorrectly).toBe(14);
+    expect(run.results.map((r) => r.testCaseId)).toEqual((await b.listTestCases(id)).map((t) => t.id));
+  });
+
+  it("accepts a rating for an answer another instance wrote, and gives new records fresh ids", async () => {
+    const [a, b] = [createMemoryStore(), createMemoryStore()];
+    await Promise.all([a.ready, b.ready]);
+    const exchange = { conversationId: null, question: "q", answer: "a", sources: [], answered: true, mode: "search" as const };
+    const one = await a.logExchange(DEMO_BUSINESS, exchange);
+    const two = await b.logExchange(DEMO_BUSINESS, exchange);
+    expect(one.messageId).not.toBe(two.messageId);
+    await expect(b.setFeedback(one.messageId, 1)).resolves.toBeUndefined();
+    await a.setFeedback(one.messageId, 1);
+    expect((await a.getMessages(DEMO_BUSINESS.id, one.conversationId)).at(-1)?.feedback).toBe(1);
+  });
+
   it("seeds conversations, masks follow-up emails and counts stats", async () => {
     const store = createMemoryStore();
     await store.ready;

@@ -327,6 +327,10 @@ export default async function Home() {
               <dd>Keyword ranking plus pgvector embeddings from a free model, merged and re-ranked for each question.</dd>
             </div>
             <div>
+              <dt>Made with Claude</dt>
+              <dd>Built in collaboration with Claude, Anthropic&rsquo;s AI model. Beki set the brief, directed the work and tested it; Claude wrote the code.</dd>
+            </div>
+            <div>
               <dt>Tested</dt>
               <dd>Unit tests cover the ranking, grading and citation logic. Playwright drives the chat and the owner area in a real browser.</dd>
             </div>
@@ -341,7 +345,7 @@ export default async function Home() {
 
       <footer className="foot">
         <p>
-          Askwell is a portfolio project by Beki, built with Claude. Larkspur Night Line is invented for the
+          Askwell is a portfolio project by Beki, made in collaboration with Claude. Larkspur Night Line is invented for the
           demo.
         </p>
         <nav aria-label="Footer">

@@ -13,7 +13,7 @@ export default async function Quality() {
         see whether the assistant got better or worse. Each answer is also checked against its sources: any
         number or sentence the passages do not back is flagged.
       </p>
-      <QualityRunner tests={tests} runs={runs} readOnly={readOnly} />
+      <QualityRunner businessId={business.id} tests={tests} runs={runs} readOnly={readOnly} />
     </main>
   );
 }

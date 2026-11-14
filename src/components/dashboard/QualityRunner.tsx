@@ -3,6 +3,7 @@
 import { useRouter } from "next/navigation";
 import { type FormEvent, useRef, useState, useTransition } from "react";
 import { keyHeaders, useSavedKey } from "@/lib/client/key";
+import { useLocalRun, writeLocalRun } from "@/lib/client/local-run";
 import { errorMessage, readEvents } from "@/lib/client/stream";
 import { VERDICT_LABEL } from "@/lib/evals";
 import { timeAgo } from "@/lib/format";
@@ -18,7 +19,14 @@ type RunEvent =
 
 const passed = (r: TestResult) => r.verdict === "correct" || r.verdict === "declined_correctly";
 
-export function QualityRunner({ tests, runs, readOnly }: { tests: TestCase[]; runs: EvalRun[]; readOnly: boolean }) {
+interface Props {
+  businessId: string;
+  tests: TestCase[];
+  runs: EvalRun[];
+  readOnly: boolean;
+}
+
+export function QualityRunner({ businessId, tests, runs: savedRuns, readOnly }: Props) {
   const router = useRouter();
   const savedKey = useSavedKey();
   const [running, setRunning] = useState(false);
@@ -27,12 +35,19 @@ export function QualityRunner({ tests, runs, readOnly }: { tests: TestCase[]; ru
   const [open, setOpen] = useState<string | null>(null);
   const abort = useRef<AbortController | null>(null);
 
+  // The read-only demo does not keep runs on the server, so the visitor's own
+  // latest run is remembered in their browser and takes its place in the list.
+  const localRun = useLocalRun(businessId);
+  const mine = localRun && (!savedRuns[0] || localRun.createdAt > savedRuns[0].createdAt) ? localRun : null;
+  const runs = mine ? [mine, ...savedRuns] : savedRuns;
+
   // Show the run in progress, or else the most recent saved one.
   const shown = live ?? (runs[0] ? { mode: runs[0].mode, model: runs[0].model, results: runs[0].results, total: runs[0].total, at: runs[0].createdAt } : null);
   const byTest = new Map(shown?.results.map((r) => [r.testCaseId, r]));
   const results = shown?.results ?? [];
   const pass = results.filter(passed).length;
-  const previous = live ? runs[0] : runs[1];
+  // The run to compare against: the newest one that is not the run on screen.
+  const previous = (live ? runs : runs.slice(1)).find((r) => r.createdAt !== live?.at);
 
   async function run() {
     setRunning(true);
@@ -50,6 +65,7 @@ export function QualityRunner({ tests, runs, readOnly }: { tests: TestCase[]; ru
         else {
           setLive({ mode: event.run.mode, model: event.run.model, results: event.run.results, total: event.run.total, at: event.run.createdAt });
           if (event.saved) router.refresh();
+          else writeLocalRun(businessId, event.run);
         }
       }
     } catch (e) {
@@ -121,6 +137,9 @@ export function QualityRunner({ tests, runs, readOnly }: { tests: TestCase[]; ru
           </dl>
         )}
         {error && <p className="form-error" role="alert">{error}</p>}
+        {readOnly && (live?.at || mine) && !running && (
+          <p className="dash-hint">This is the public demo, so your run is kept in this browser only.</p>
+        )}
         <p className="dash-hint">
           {savedKey
             ? "Your AI key is set in this tab, so the model writes each answer and the run uses your credit."

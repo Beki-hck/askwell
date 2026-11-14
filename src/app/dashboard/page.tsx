@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { LastRun } from "@/components/dashboard/LastRun";
 import { percent, timeAgo } from "@/lib/format";
 import { getViewer } from "@/lib/session";
 
@@ -77,16 +78,14 @@ export default async function Overview() {
           )}
 
           <h2 className="dash-gap">Answer quality</h2>
-          {lastRun ? (
-            <p>
-              The last test run passed {lastRun.correct + lastRun.declinedCorrectly} of {lastRun.total}{" "}
-              questions, {timeAgo(lastRun.createdAt)}. <Link href="/dashboard/quality">See the results</Link>
-            </p>
-          ) : (
-            <p>
-              The tests have not been run yet. <Link href="/dashboard/quality">Run them now</Link>
-            </p>
-          )}
+          <LastRun
+            businessId={business.id}
+            saved={
+              lastRun
+                ? { passed: lastRun.correct + lastRun.declinedCorrectly, total: lastRun.total, createdAt: lastRun.createdAt }
+                : null
+            }
+          />
         </section>
       </div>
     </main>

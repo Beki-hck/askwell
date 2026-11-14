@@ -25,6 +25,7 @@ interface Turn {
   mode: AnswerMode | null;
   messageId: string | null;
   feedback: 1 | -1 | null;
+  feedbackFailed: boolean;
   followUp: "idle" | "sending" | "sent";
   error: string | null;
 }
@@ -103,6 +104,7 @@ export function Chat({ business, hasServerModel, onSources, onOpenKey, autoFocus
         mode: null,
         messageId: null,
         feedback: null,
+        feedbackFailed: false,
         followUp: "idle",
         error: null,
       },
@@ -153,13 +155,13 @@ export function Chat({ business, hasServerModel, onSources, onOpenKey, autoFocus
 
   async function rate(turn: Turn, value: 1 | -1) {
     if (!turn.messageId || turn.feedback === value) return;
-    patch(turn.id, { feedback: value });
+    patch(turn.id, { feedback: value, feedbackFailed: false });
     const response = await fetch("/api/feedback", {
       method: "POST",
       headers: { "content-type": "application/json" },
       body: JSON.stringify({ messageId: turn.messageId, value }),
     }).catch(() => null);
-    if (!response?.ok) patch(turn.id, { feedback: turn.feedback });
+    if (!response?.ok) patch(turn.id, { feedback: turn.feedback, feedbackFailed: true });
   }
 
   async function requestFollowUp(turn: Turn, event: FormEvent<HTMLFormElement>) {
@@ -271,7 +273,13 @@ export function Chat({ business, hasServerModel, onSources, onOpenKey, autoFocus
 
                   {turn.status === "done" && turn.answered && turn.messageId && turn.sources.length > 0 && (
                     <div className="chat-rate">
-                      <span>{turn.feedback ? "Thanks for telling us." : "Did this help?"}</span>
+                      <span role="status">
+                        {turn.feedbackFailed
+                          ? "That was not saved. Try again."
+                          : turn.feedback
+                            ? "Thanks for telling us."
+                            : "Did this help?"}
+                      </span>
                       <button type="button" aria-pressed={turn.feedback === 1} onClick={() => void rate(turn, 1)}>
                         Yes
                       </button>
