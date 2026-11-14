@@ -2,7 +2,7 @@
 -- Safe to run again: it replaces the demo's documents and tests and keeps its conversations.
 
 insert into public.businesses (id, owner_id, slug, name, assistant_name, greeting, tone, daily_limit, is_demo, suggestions)
-values ('00000000-0000-4000-8000-000000000001', null, 'larkspur', 'Larkspur Night Line', 'Wren', 'Evening. I''m Wren, Larkspur''s assistant. Ask me about cabins, luggage, pets, refunds or delays and I''ll point you to the page I got it from.', 'warm', 400, true, array['Can I bring my dog?', 'What happens if my train is late?', 'How late can I board?', 'Is breakfast included?']::text[])
+values ('00000000-0000-4000-8000-000000000001', null, 'larkspur', 'Larkspur Night Line', 'Wren', 'Evening. I''m Wren, Larkspur''s assistant. Ask me about cabins, luggage, pets, refunds or delays and I''ll point you to the page I got it from.', 'warm', 400, true, array['Can I bring my dog?', 'What happens if my train is late?', 'When does boarding close?', 'Is breakfast included?']::text[])
 on conflict (id) do update set name = excluded.name, assistant_name = excluded.assistant_name,
   greeting = excluded.greeting, tone = excluded.tone, daily_limit = excluded.daily_limit, suggestions = excluded.suggestions;
 

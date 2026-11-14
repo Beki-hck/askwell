@@ -99,6 +99,6 @@ npm run test:e2e    # 28 browser tests: chat, owner area, embed script, read-onl
 - The in-memory mode is covered end to end by the tests above. Because a host like Vercel runs several copies of the server that share no memory, some tests send a click to a second server than the one that drew the page.
 - In the read-only demo a test run is not stored on the server. It is kept in the visitor's browser and shown only to them.
 - The database schema, security policies and widget functions were run and checked directly in Postgres. The embedding function is deployed and was used to embed the demo passages.
-- The app talking to that database over the network has not been exercised yet, because the build machine could not reach Supabase. Until it has, treat the Supabase mode as untested end to end.
+- The hosted site runs on that database, and was checked there by hand: answers (keyword plus meaning search), ratings, follow-ups, the owner pages and a full test run (14 of 15). Account sign-up has not been tried on the hosted site.
 - Model mode is tested against a simulated provider (both the Claude and the OpenAI-style stream formats). It has not been run against a paid API.
-- The demo's starting conversations are produced by running real questions through the search-only pipeline when the server starts. None of them are written by hand.
+- The demo's starting conversations are produced by running real questions through the search-only pipeline: at server start in memory mode, and through the live chat for the database (their times were then spread over the past day). None of them are written by hand. The saved test run in the database comes from [`scripts/demo-run-sql.ts`](scripts/demo-run-sql.ts).
