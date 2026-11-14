@@ -85,6 +85,11 @@ const toMessage = (r: MessageRow): Message => ({
   createdAt: r.created_at,
 });
 
+/** The one query-builder method the count filters use. */
+interface Eq<Q> {
+  eq(column: string, value: unknown): Q;
+}
+
 function check<T>(result: { data: T; error: { message: string; code?: string } | null }): T {
   if (result.error) {
     if (result.error.message.includes("daily limit")) {
@@ -475,7 +480,7 @@ export function createSupabaseStore(db: SupabaseClient): Store {
     },
 
     async stats(businessId) {
-      const count = async (table: string, filter?: (q: any) => any) => {
+      const count = async (table: string, filter?: <Q extends Eq<Q>>(q: Q) => Q) => {
         let query = db.from(table).select("id", { count: "exact", head: true }).eq("business_id", businessId);
         if (filter) query = filter(query);
         const { count: n, error } = await query;

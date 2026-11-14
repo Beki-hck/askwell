@@ -33,7 +33,8 @@ export async function readJson(request: Request): Promise<Record<string, unknown
 export function text(value: unknown, field: string, max: number, min = 1): string {
   if (typeof value !== "string") throw new StoreError(`${field} is required.`, 400);
   const clean = value.trim();
-  if (clean.length < min) throw new StoreError(`${field} is required.`, 400);
+  if (!clean) throw new StoreError(`${field} is required.`, 400);
+  if (clean.length < min) throw new StoreError(`${field} is too short. Write at least ${min} characters.`, 400);
   if (clean.length > max) throw new StoreError(`${field} is too long (max ${max} characters).`, 400);
   return clean;
 }

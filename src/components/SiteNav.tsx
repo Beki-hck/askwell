@@ -13,8 +13,8 @@ export function SiteNav() {
     <header className="nav">
       <Wordmark />
       <nav aria-label="Main">
-        <a href="/#how">How it works</a>
-        <a href="/#quality">Answer quality</a>
+        <Link href="/#how">How it works</Link>
+        <Link href="/#quality">Answer quality</Link>
         <Link href="/demo">Demo site</Link>
       </nav>
       <Link className="button nav-cta" href="/dashboard">

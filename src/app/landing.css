@@ -163,13 +163,13 @@
   line-height: 1.6;
 }
 
-.doc h1 {
+.doc .doc-title {
   margin-bottom: 1.1rem;
   font: 500 1.9rem/1.1 var(--serif);
   letter-spacing: -0.01em;
 }
 
-.doc h2 {
+.doc .doc-heading {
   margin: 1.6rem 0 0.35rem;
   font: 600 0.9375rem/1.3 var(--sans);
   letter-spacing: 0;
@@ -269,7 +269,7 @@
 }
 
 /* Shared section type */
-.home h2:not(.doc h2) {
+.home h2 {
   max-width: 20ch;
   font-size: clamp(1.9rem, 3.8vw, 3rem);
   letter-spacing: -0.03em;

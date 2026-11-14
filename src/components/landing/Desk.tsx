@@ -57,6 +57,7 @@ export function Desk({ business, hasServerModel, allowLocal, documents }: Props)
               // Remount on every new citation so the highlighter stroke is drawn again.
               key={`${active.id}:${marked?.at ?? 0}`}
               content={active.content}
+              level={3}
               highlight={marked?.documentId === active.id ? marked.heading : undefined}
             />
           )}

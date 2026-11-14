@@ -58,6 +58,7 @@ export function Chat({ business, hasServerModel, onSources, onOpenKey, autoFocus
   const [draft, setDraft] = useState("");
   const [openSource, setOpenSource] = useState<string | null>(null);
   const conversationId = useRef<string | null>(null);
+  const nextId = useRef(1);
   const abort = useRef<AbortController | null>(null);
   const scroller = useRef<HTMLDivElement>(null);
   const savedKey = useSavedKey();
@@ -81,7 +82,7 @@ export function Chat({ business, hasServerModel, onSources, onOpenKey, autoFocus
   async function ask(raw: string) {
     const question = raw.trim();
     if (!question || busy) return;
-    const id = Date.now();
+    const id = nextId.current++;
     const history = turns
       .filter((t) => t.status === "done")
       .flatMap((t) => [

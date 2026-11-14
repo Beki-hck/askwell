@@ -35,6 +35,17 @@ interface State {
 const id = () => crypto.randomUUID();
 const MAX_CONVERSATIONS = 300;
 
+/** A uuid-shaped id derived from a string. */
+function stableId(seed: string): string {
+  let hex = "";
+  for (let round = 0; hex.length < 32; round++) {
+    let h = 2166136261 ^ round;
+    for (const ch of seed) h = Math.imul(h ^ ch.charCodeAt(0), 16777619);
+    hex += (h >>> 0).toString(16).padStart(8, "0");
+  }
+  return `${hex.slice(0, 8)}-${hex.slice(8, 12)}-4${hex.slice(13, 16)}-8${hex.slice(17, 20)}-${hex.slice(20, 32)}`;
+}
+
 /**
  * In-memory store, seeded with the demo business. It backs local development,
  * the automated tests, and any deployment that has no database configured.
@@ -57,10 +68,12 @@ export function createMemoryStore(now: () => Date = () => new Date()): Store & {
   const insertDocument = (
     doc: { title: string; content: string; sourceType?: DocumentRecord["sourceType"]; sourceUrl?: string | null },
     createdAt: string,
+    stable = false,
   ): DocumentRecord => {
     const chunks = chunkDocument(doc.content);
     const record: DocumentRecord = {
-      id: id(),
+      // Seeded documents get the same id on every server instance, so links to them keep working.
+      id: stable ? stableId(doc.title) : id(),
       businessId: state.business.id,
       title: doc.title,
       sourceType: doc.sourceType ?? "text",
@@ -289,7 +302,7 @@ export function createMemoryStore(now: () => Date = () => new Date()): Store & {
    * run through the same answer pipeline a visitor's question goes through.
    */
   const seed = async () => {
-    for (const doc of DEMO_DOCUMENTS) insertDocument(doc, ago(60 * 24 * 9));
+    for (const doc of DEMO_DOCUMENTS) insertDocument(doc, ago(60 * 24 * 9), true);
     for (const convo of DEMO_SEED_QUESTIONS) {
       let conversationId: string | null = null;
       for (const [i, question] of convo.questions.entries()) {

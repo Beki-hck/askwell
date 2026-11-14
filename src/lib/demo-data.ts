@@ -18,7 +18,7 @@ export const DEMO_BUSINESS: Business = {
   suggestions: [
     "Can I bring my dog?",
     "What happens if my train is late?",
-    "How late can I board?",
+    "When does boarding close?",
     "Is breakfast included?",
   ],
 };
@@ -300,7 +300,7 @@ export const DEMO_SEED_QUESTIONS: { questions: string[]; minutesAgo: number; fee
   { questions: ["Can I bring my dog?", "Is she allowed in the dining car?"], minutesAgo: 14, feedback: [1] },
   { questions: ["What happens if my train is late by 2 hours?"], minutesAgo: 52, feedback: [1] },
   { questions: ["Do you have a loyalty programme?"], minutesAgo: 95 },
-  { questions: ["How late can I board?", "What ID do I need?"], minutesAgo: 180, feedback: [1, 1] },
+  { questions: ["When does boarding close?", "What ID do I need?"], minutesAgo: 180, feedback: [1, 1] },
   { questions: ["Can I cancel a Saver ticket?"], minutesAgo: 260, feedback: [-1] },
   { questions: ["Do you sell gift cards?"], minutesAgo: 420 },
   { questions: ["Are bikes allowed and how much is it?"], minutesAgo: 610, feedback: [1] },

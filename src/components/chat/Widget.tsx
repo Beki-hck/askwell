@@ -20,6 +20,14 @@ export function Widget({ business, hasServerModel, allowLocal, embedded, style }
   const keyDialog = useRef<HTMLDialogElement>(null);
   const launcher = useRef<HTMLButtonElement>(null);
 
+  // When the panel closes, focus goes back to the button that opened it. This
+  // runs after render because on phones the button is hidden while the panel is open.
+  const wasOpen = useRef(false);
+  useEffect(() => {
+    if (wasOpen.current && !open) launcher.current?.focus();
+    wasOpen.current = open;
+  }, [open]);
+
   useEffect(() => {
     if (embedded) window.parent?.postMessage({ askwell: open ? "open" : "close" }, "*");
   }, [open, embedded]);
@@ -27,10 +35,7 @@ export function Widget({ business, hasServerModel, allowLocal, embedded, style }
   useEffect(() => {
     if (!open) return;
     const onKey = (e: KeyboardEvent) => {
-      if (e.key === "Escape" && !keyDialog.current?.open) {
-        setOpen(false);
-        launcher.current?.focus();
-      }
+      if (e.key === "Escape" && !keyDialog.current?.open) setOpen(false);
     };
     document.addEventListener("keydown", onKey);
     return () => document.removeEventListener("keydown", onKey);
@@ -51,10 +56,7 @@ export function Widget({ business, hasServerModel, allowLocal, embedded, style }
             <button
               type="button"
               aria-label="Close chat"
-              onClick={() => {
-                setOpen(false);
-                launcher.current?.focus();
-              }}
+              onClick={() => setOpen(false)}
             >
               <svg viewBox="0 0 20 20" width="18" height="18" aria-hidden="true">
                 <path d="m5 5 10 10M15 5 5 15" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />
